@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>家报分析Ⅰ</title>
+    <link rel="stylesheet" href="${request.contextPath}/statics/css/bootstrap.min.css">
+    <script src="${request.contextPath}/statics/libs/echars.js?_${.now?long}"></script>
+    <script src="${request.contextPath}/statics/libs/jquery.min.js?_${.now?long}"></script>
+    <script src="${request.contextPath}/statics/libs/vue.min.js?_${.now?long}"></script>
+    <style>
+        .ranking {
+            font-size: 22px;
+            padding: 15px 0px;
+            border: 1px solid #ccc;
+            border-bottom: none;
+        }
+        thead tr th {
+            padding: 15px 0px;
+            font-size: 17px;
+        }
+        table {
+            border-collapse: collapse;
+            border-spacing: 0;
+        }
+        tbody tr td {
+            padding-bottom: 15px;
+            text-align: center;
+            font-size: 16px;
+        }
+        .pie {
+            display: flex;
+            border: 1px solid #ccc;
+            text-align: center;
+        }
+        #pie1, #pie2, #pie3, #pie4, #pie5, #pie6{
+            width: 63vw;
+            height: 63vw;
+            margin-right: 1.6vw;
+        }
+        select {
+            height: 30px;
+            border: 1px solid #ccc;
+            margin-left: 15px;
+            margin-right: 15%;
+            outline: none;
+            font-size: 16px;
+            z-index: 999;
+        }
+    </style>
+</head>
+<body>
+<div id="total">
+    <table class="table table-bordered table-hover">
+        <div class="ranking">
+            <select id="selectName">
+                <option value="null">请选择产品线名称</option>
+                <option>家用可燃气体探测器</option>
+                <option>工业及商业用途点型可燃气体探测器</option>
+                <option>工业及商业用途便携式可燃气体探测器</option>
+            </select>证书数量排行榜</div>
+        <thead>
+        <tr id="line1">
+            <th>排名</th>
+            <th>公司</th>
+            <th>证书总数</th>
+            <th>甲烷</th>
+            <th>丙烷</th>
+            <th>一氧化碳</th>
+            <th>双气</th>
+        </tr>
+        <tr id="line2" style="display: none">
+            <th>排名</th>
+            <th>公司</th>
+            <th>证书总数</th>
+            <th>甲烷</th>
+            <th>丙烷</th>
+            <th>其他</th>
+        </tr>
+        </thead>
+        <tbody id="home1">
+        </tbody>
+    </table>
+</div>
+<div class="pie">
+    <div id="pie1"></div>
+    <div id="pie2"></div>
+</div>
+<div class="pie" style="border-bottom: none; border-top: none">
+    <div id="pie3"></div>
+    <div id="pie4"></div>
+</div>
+<div class="pie">
+    <div id="pie5"></div>
+    <div id="pie6"></div>
+</div>
+
+<script src="${request.contextPath}/statics/js/modules/sys/home.js?_${.now?long}"></script>
+<script type="text/javascript">
+    window.onload=function(){
+        $('#selectName').change();
+    }
+</script>
+</body>
+</html>

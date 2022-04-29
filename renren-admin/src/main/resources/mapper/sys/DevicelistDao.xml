@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.renren.modules.sys.dao.DevicelistDao">
+
+	<!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="io.renren.modules.sys.entity.DevicelistEntity" id="devicelistMap">
+        <result property="id" column="id"/>
+        <result property="mn" column="mn"/>
+        <result property="datatime" column="DataTime"/>
+        <result property="oilconcentration" column="oilconcentration"/>
+        <result property="oiltype" column="oilType"/>
+        <result property="nmhc" column="NMHC"/>
+        <result property="nmhctype" column="NMHCType"/>
+        <result property="pm10" column="PM10"/>
+        <result property="pm10type" column="PM10Type"/>
+        <result property="current" column="current"/>
+        <result property="currenttype" column="currentType"/>
+        <result property="purifier" column="purifier"/>
+        <result property="purifiertype" column="purifierType"/>
+        <result property="installAddr" column="install_addr"/>
+        <result property="onlineType" column="online_type"/>
+        <result property="usestatus" column="usestatus"/>
+        <result property="province" column="province"/>
+        <result property="city" column="city"/>
+        <result property="area" column="area"/>
+    </resultMap>
+
+
+</mapper>

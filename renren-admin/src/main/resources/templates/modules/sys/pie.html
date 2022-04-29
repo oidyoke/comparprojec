@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>分析报表Ⅱ</title>
+    <#include "/header.html">
+    <link rel="stylesheet" href="${request.contextPath}/statics/css/bootstrap.min.css">
+    <script src="${request.contextPath}/statics/libs/echars.js?_${.now?long}"></script>
+    <script src="${request.contextPath}/statics/libs/jquery.min.js?_${.now?long}"></script>
+    <style>
+        #head tr th {
+            padding: 10px 70px;
+            font-size: 18px;
+        }
+        #separator ,#separator1{
+            display: flex;
+            justify-content: center;
+            margin: 20px 0px;
+        }
+        .autocomplete {
+            /*容器定位设置为 relative:*/
+            position: relative;
+            display: flex;
+        }
+        input {
+            border: 1px solid #ccc;
+            padding: 10px;
+            font-size: 16px;
+            outline:none;
+            border-radius: 3px;
+        }
+        #mySubmit ,#mySubmit1{
+            border: 1px solid #ccc;
+            border-radius: 3px;
+            background-color: white;
+        }
+        .autocomplete-items {
+            position: absolute;
+            border: 1px solid #d4d4d4;
+            border-bottom: none;
+            border-top: none;
+            z-index: 99;
+            /*设置自动填充项宽度与容器相同*/
+            top: 100%;
+            left: 0;
+            right: 0;
+        }
+        .autocomplete-items div {
+            padding: 10px;
+            cursor: pointer;
+            background-color: #fff;
+            border-bottom: 1px solid #d4d4d4;
+        }
+        .autocomplete-items div:hover {
+            /*鼠标移动到填充项设置的背景颜色*/
+            background-color: #e9e9e9;
+        }
+        .autocomplete-active {
+            /*使用箭头键浏览填充项时的背景颜色*/
+            background-color: DodgerBlue !important;
+            color: #ffffff;
+        }
+        #pie ,#pie1{
+            width: 100vw;
+            height: 40vw;
+        }
+    </style>
+</head>
+<body>
+<div id="head">
+  <table class="table-bordered">
+      <tr>
+          <th>公司数量</th>
+          <th id="companyNumber"></th>
+          <th>证书总量</th>
+          <th id="totalNumber"></th>
+          <th>证书状态</th>
+          <th>有效</th>
+      </tr>
+  </table>
+</div>
+
+<div id="separator">
+    <select style="border:1px solid #ccc;outline: none" id="mySelect">
+        <option value="null">请选择产品线名称</option>
+        <option value="家用可燃气体探测器">家用可燃气体探测器</option>
+        <option value="工业及商业用途点型可燃气体探测器">工业及商业用途点型可燃气体探测器</option>
+        <option value="工业及商业用途便携式可燃气体探测器">工业及商业用途便携式可燃气体探测器</option>
+    </select>
+    <select style="margin: 0px 20px;border:1px solid #ccc;outline: none; width: 260px" id="mySelect1">
+        <option value="null">请选择分类方式</option>
+        <option value="standardnumber">标准号</option>
+        <option value="keymodels">关键件型号</option>
+        <option value="keymanufacturers">关键器件生产厂家</option>
+        <option value="powerupply">供电方式</option>
+        <option value="gastype">气体种类</option>
+        <option value="rangey">量程</option>
+        <option value="alarm">报警设定值</option>
+        <option value="material">外壳材质</option>
+        <option value="workingmode">工作方式</option>
+        <option value="samplingmode">采样方式</option>
+        <option value="usecondition">使用工作条件</option>
+        <option value="displayfunction">显示功能</option>
+        <option value="outputnode">输出节量点数</option>
+        <option value="inspectionorganization">检验机构</option>
+    </select>
+    <form autocomplete="off" action="/index.php" name="myform">
+        <div class="autocomplete" style="width: 300px">
+            <input id="myInput" type="text" name="s" placeholder="请输入公司名称">
+            <input type="submit" id="mySubmit" onclick="return func()">
+        </div>
+    </form>
+</div>
+<div id="pie"></div>
+
+<div id="separator1">
+    <select style="border:1px solid #ccc;outline: none" id="mySelectVal">
+        <option value="null">请选择产品线名称</option>
+        <option value="家用可燃气体探测器">家用可燃气体探测器</option>
+        <option value="工业及商业用途点型可燃气体探测器">工业及商业用途点型可燃气体探测器</option>
+        <option value="工业及商业用途便携式可燃气体探测器">工业及商业用途便携式可燃气体探测器</option>
+    </select>
+   <input type="text" placeholder="请输入产品型号" style="margin: 0px 20px" id="productType">
+    <form autocomplete="off" action="/index.php" name="myform">
+        <div class="autocomplete" style="width: 300px">
+            <input id="myInput1" type="text" name="s" placeholder="请输入传感器型号" style="width: 100%">
+            <input type="submit" id="mySubmit1" onclick="return func1()">
+        </div>
+    </form>
+</div>
+<div id="pie1"></div>
+
+<script src="${request.contextPath}/statics/js/modules/sys/pie.js?_${.now?long}"></script>
+<script type="text/javascript">
+    window.onload=function(){
+       reset();
+    }
+</script>
+
+</body>
+</html>

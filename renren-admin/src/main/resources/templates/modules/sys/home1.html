@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>家报分析Ⅱ</title>
+    <link rel="stylesheet" href="${request.contextPath}/statics/css/bootstrap.min.css">
+    <script src="${request.contextPath}/statics/libs/echars.js?_${.now?long}"></script>
+    <script src="${request.contextPath}/statics/libs/jquery.min.js?_${.now?long}"></script>
+    <script src="${request.contextPath}/statics/libs/vue.min.js?_${.now?long}"></script>
+    <style>
+        .ranking {
+            font-size: 22px;
+            padding: 15px 0px;
+            border: 1px solid #ccc;
+            border-bottom: none;
+        }
+        thead tr th {
+            width: 20%;
+            padding: 15px 0px;
+            font-size: 17px;
+        }
+        table {
+            border-collapse: collapse;
+            border-spacing: 0;
+        }
+        tbody tr td {
+            padding-bottom: 15px;
+            text-align: center;
+            font-size: 16px;
+        }
+        select {
+            height: 30px;
+            border: 1px solid #C6C6C6;
+            margin: 0px 15px;
+            /*margin-right: 5%;*/
+            outline: none;
+            font-size: 16px;
+        }
+    </style>
+</head>
+<body>
+<div id="total">
+    <table class="table table-bordered table-hover table-striped">
+        <div class="ranking">
+            <select id="selectName">
+                <option value="null">请选择传感器类型</option>
+                <option value="甲烷">甲烷传感器</option>
+                <option value="丙烷">丙烷传感器</option>
+                <option value="一氧化碳">一氧化碳传感器</option>
+            </select>
+            <select id="selectName2">
+                <option value="null">请选择产品线名称</option>
+                <option>家用可燃气体探测器</option>
+                <option>工业及商业用途点型可燃气体探测器</option>
+                <option>工业及商业用途便携式可燃气体探测器</option>
+            </select>
+            传感器使用排行榜</div>
+        <thead>
+        <tr>
+            <th>排名</th>
+            <th>传感器</th>
+            <th>生产厂家</th>
+            <th>使用厂家数量</th>
+            <th>占比</th>
+        </tr>
+        </thead>
+        <tbody id="methane">
+        </tbody>
+    </table>
+</div>
+
+
+
+<script src="${request.contextPath}/statics/js/modules/sys/home1.js?_${.now?long}"></script>
+<script type="text/javascript">
+    window.onload=function(){
+        $('#selectName2').change();
+    }
+</script>
+</body>
+</html>

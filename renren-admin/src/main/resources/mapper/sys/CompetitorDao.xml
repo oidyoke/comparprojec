@@ -1,0 +1,623 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.renren.modules.sys.dao.CompetitorDao">
+
+	<!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="io.renren.modules.sys.entity.CompetitorEntity" id="competitorMap">
+        <result property="id" column="id"/>
+        <result property="company" column="company"/>
+        <result property="categor" column="categor"/>
+        <result property="product" column="product"/>
+        <result property="model" column="model"/>
+        <result property="usedname" column="usedname"/>
+        <result property="producer" column="producer"/>
+        <result property="manufacturer" column="manufacturer"/>
+        <result property="fertificate" column="fertificate"/>
+        <result property="firstissuedate" column="firstissuedate"/>
+        <result property="renewaldate" column="renewaldate"/>
+        <result property="termvalidity" column="termvalidity"/>
+        <result property="implementationrule" column="implementationrule"/>
+        <result property="certification" column="certification"/>
+        <result property="standardnumber" column="standardnumber"/>
+        <result property="inspectionnumber" column="inspectionnumber"/>
+        <result property="report" column="report"/>
+        <result property="inspectioncategory" column="inspectioncategory"/>
+        <result property="inspectionitems" column="inspectionitems"/>
+        <result property="device" column="device"/>
+        <result property="keymodels" column="key_models"/>
+        <result property="keymanufacturers" column="keymanufacturers"/>
+        <result property="powerupply" column="powerupply"/>
+        <result property="gastype" column="gastype"/>
+        <result property="rangey" column="rangey"/>
+        <result property="alarm" column="alarm"/>
+        <result property="useenvironment" column="useenvironment"/>
+        <result property="explosionproof" column="explosionproof"/>
+        <result property="wording" column="wording"/>
+        <result property="material" column="material"/>
+        <result property="workingmode" column="workingmode"/>
+        <result property="samplingmode" column="samplingmode"/>
+        <result property="usecondition" column="usecondition"/>
+        <result property="displayfunction" column="displayfunction"/>
+        <result property="displaydevice" column="displaydevice"/>
+        <result property="difference" column="difference"/>
+        <result property="patch" column="patch"/>
+        <result property="outputnode" column="outputnode"/>
+        <result property="productpicture" column="productpicture"/>
+        <result property="inspectionorganization" column="inspectionorganization"/>
+        <result property="organization" column="organization"/>
+        <result property="examine" column="examine"/>
+        <result property="approval" column="approval"/>
+        <result property="productcertificate" column="productcertificate"/>
+        <result property="inspectionreport" column="inspectionreport"/>
+    </resultMap>
+
+    <select id="selectAll" resultType="io.renren.modules.sys.excel.CompetitorExcel">
+        select * from competitor
+    </select>
+
+    <select id="selectTopTen" resultType="io.renren.modules.sys.entity.TopTenEntity">
+        select E.*,IFNULL(F.`num3`,0) as "num3" from ((select C.*,IFNULL(D.`num2`,0) as "num2" from ((select A.*,IFNULL(B.`num1`,0) as "num1" from ((select company,count(*) as "num" from competitor group by company order by num desc limit 10)as A
+                                                                                                                                                       LEFT JOIN
+                                                                                                                                                   (select company,count(*) as "num1" from competitor where product ="家用可燃气体探测器"  group by company) as B
+                                                                                                                                                   ON A.company = B.company))as C
+                                                                                                        LEFT JOIN
+                                                                                                    (select company,count(*) as "num2" from competitor where product ="工业及商业用途便携式可燃气体探测器"  group by company) as D
+                                                                                                    ON C.company = D.company))as E
+                                                         LEFT JOIN
+                                                     (select company,count(*) as "num3" from competitor where product ="工业及商业用途点型可燃气体探测器"  group by company) as F
+                                                     ON E.company = F.company);
+    </select>
+
+    <select id="selectCompany" resultType="io.renren.modules.sys.entity.CompanyEntity">
+        select company from competitor group by company;
+    </select>
+
+    <select id="selectPowerUpply" resultType="io.renren.modules.sys.entity.CompanyEntity">
+        select powerupply as company from competitor group by powerupply;
+    </select>
+
+    <select id="selectGasType" resultType="io.renren.modules.sys.entity.CompanyEntity">
+        select gastype as company from competitor group by gastype;
+    </select>
+
+    <select id="selectRangey" resultType="io.renren.modules.sys.entity.CompanyEntity">
+        select rangey as company from competitor group by rangey;
+    </select>
+
+    <select id="selectAlarm" resultType="io.renren.modules.sys.entity.CompanyEntity">
+        select alarm as company from competitor group by alarm;
+    </select>
+
+    <select id="selectInspectionorganization" resultType="io.renren.modules.sys.entity.CompanyEntity">
+        select inspectionorganization as company from competitor group by inspectionorganization;
+    </select>
+
+    <select id="selectProduct" resultType="io.renren.modules.sys.entity.ProductEntity" parameterType="String">
+        select product as name ,count(*) as value from competitor
+        <where>
+            <if test="_parameter != null and _parameter != ''">
+                company= #{company}
+            </if>
+        </where>  group by product;
+    </select>
+
+    <select id="selectMonthCount" resultType="io.renren.modules.sys.entity.MonthEntity" parameterType="String">
+        select IFNULL(B.`num`,0) as num from ((select *from m)as A
+        LEFT JOIN
+        (select month(renewaldate) as month ,count(*) as num from competitor
+        <where>
+            <if test="_parameter != null and _parameter != '' and _parameter != '全部'">
+                year(renewaldate)= #{yearId}
+            </if>
+        </where>
+        group by month(renewaldate)) as B
+        ON A.month = B.month);
+    </select>
+
+    <select id="selectProductMonthNum" resultType="io.renren.modules.sys.entity.MonthEntity">
+        select IFNULL(B.`num`,0) as num from ((select *from m)as A
+        LEFT JOIN
+        (select month(renewaldate) as month ,count(*) as num from competitor
+        where product='家用可燃气体探测器'
+        <choose>
+            <when test="_parameter != null and _parameter != '' and _parameter != '全部'">
+                and year(renewaldate)=#{yeaId}
+            </when>
+        </choose>
+        group by month(renewaldate)) as B
+        ON A.month = B.month);
+    </select>
+
+    <select id="selectProductMonthNum1" resultType="io.renren.modules.sys.entity.MonthEntity">
+        select IFNULL(B.`num`,0) as num from ((select *from m)as A
+        LEFT JOIN
+        (select month(renewaldate) as month ,count(*) as num from competitor
+        where product='工业及商业用途便携式可燃气体探测器'
+        <choose>
+            <when test="_parameter != null and _parameter != '' and _parameter != '全部'">
+                and year(renewaldate)= #{yeaId}
+            </when>
+        </choose>
+        group by month(renewaldate)) as B
+        ON A.month = B.month);
+    </select>
+
+    <select id="selectProductMonthNum2" resultType="io.renren.modules.sys.entity.MonthEntity">
+        select IFNULL(B.`num`,0) as num from ((select *from m)as A
+        LEFT JOIN
+        (select month(renewaldate) as month ,count(*) as num from competitor
+        where product='工业及商业用途点型可燃气体探测器'
+        <choose>
+            <when test="_parameter != null and _parameter != '' and _parameter != '全部'">
+                and year(renewaldate)= #{yeaId}
+            </when>
+        </choose>
+        group by month(renewaldate)) as B
+        ON A.month = B.month);
+    </select>
+
+    <select id="selectAddTopTenRank" resultType="io.renren.modules.sys.entity.TopTenEntity" parameterType="String">
+        select * from
+            (select E.*,IFNULL(F.`num3`,0) as "num3" from ((select C.*,IFNULL(D.`num2`,0) as "num2" from ((select A.*,IFNULL(B.`num1`,0) as "num1" from ((select company,count(*) as "num" from competitor group by company order by num desc limit 10)as A
+                                                                                                                                                            LEFT JOIN
+                                                                                                                                                        (select company,count(*) as "num1" from competitor where product ="家用可燃气体探测器"  group by company) as B
+                                                                                                                                                        ON A.company = B.company))as C
+                                                                                                             LEFT JOIN
+                                                                                                         (select company,count(*) as "num2" from competitor where product ="工业及商业用途便携式可燃气体探测器"  group by company) as D
+                                                                                                         ON C.company = D.company))as E
+                                                              LEFT JOIN
+                                                          (select company,count(*) as "num3" from competitor where product ="工业及商业用途点型可燃气体探测器"  group by company) as F
+                                                          ON E.company = F.company))as table1
+
+        ORDER BY
+            case
+                when #{product} = 'num' then num
+                when #{product} = 'num1' then num1
+                when #{product} = 'num2' then num2
+                when #{product} = 'num3' then num3
+                when #{product} = ''   then num
+                when #{product} = null   then num
+                end
+        DESC;
+    </select>
+
+    <select id="selectMoreValue" resultType="io.renren.modules.sys.entity.ProductEntity" parameterType="String">
+        select ${value} as name ,count(*)as value from competitor
+            where 1=1
+            <choose>
+                <when test="product !=null and product!='' and product!='undefined' and product!='null'">
+                   and  product=#{product}
+                </when>
+            </choose>
+            <if test="company !=null and company!='' and company!='undefined'">
+                and company=#{company}
+            </if>
+                group by ${value};
+        </select>
+
+    <select id="selectTotalCompany" resultType="io.renren.modules.sys.entity.ProductEntity">
+        select count(DISTINCT company) as name,count(*) as value from competitor;
+    </select>
+
+    <select id="selectNumChiCheng" resultType="io.renren.modules.sys.entity.CompanyEntity" >
+        select count(*) as company from competitor
+        where company= "河南驰诚电气股份有限公司"
+        <choose>
+            <when test="year != null and year != '' and year != '全部'">
+                and year(renewaldate)= ${year}
+            </when>
+        </choose>
+
+    </select>
+
+    <select id="selectModel" resultType="io.renren.modules.sys.entity.ProductEntity">
+        SELECT company as name,count(*) as value FROM `competitor`
+        <where>
+            <if test="product !=null and product !='' and product !='null' and product !='undefined'">
+                and product=#{product}
+            </if>
+            <if test="model != null and model !=''">
+                and  model like  '%${model}%'
+            </if>
+            <if test="keymodels != null and keymodels !='' ">
+                and keymodels like  '%${keymodels}%'
+            </if>
+        </where>
+        group by company order by value desc;
+    </select>
+
+    <select id="selectKeyModels" resultType="io.renren.modules.sys.entity.CompanyEntity">
+        select keymodels as company from competitor group by keymodels;
+    </select>
+
+    <select id="selectGasRanking" resultType="io.renren.modules.sys.entity.GasRankingEntity">
+        select * from(select G.*,IFNULL(H.gas4,0) as "doubleqi" from ((select E.*,IFNULL(F.gas3,0) as "carbonmonoxide" from ((select C.*,IFNULL(D.gas2,0) as "propane" from((select A.*,IFNULL(B.gas1,0) as "methane" from ((select company,IFNULL(count(*),0) as "totalgasnumber" from competitor
+        where 1=1
+        <choose>
+            <when test="product != null and product != '' and product!='null'">
+                and product=#{product}
+            </when>
+        </choose>
+        GROUP BY company order by count(*) DESC  LIMIT 20)as A
+        LEFT JOIN
+        (select company,count(*) as "gas1" from competitor
+        where gastype="甲烷"
+        <choose>
+            <when test="product != null and product != '' and product!='null'">
+                and product=#{product}
+            </when>
+        </choose>
+        GROUP BY company order by count(*) DESC) as B
+        ON A.company = B.company)) as C
+        LEFT JOIN
+        (select company,count(*) as "gas2" from competitor
+        where gastype="丙烷"
+        <choose>
+            <when test="product != null and product != ''">
+                and product=#{product}
+            </when>
+        </choose>
+        GROUP BY company order by count(*) DESC) as D
+        on C.company = D.company))as E
+        LEFT JOIN
+        (select company,count(*) as "gas3" from competitor
+        where gastype="一氧化碳"
+        <choose>
+            <when test="product != null and product != '' and product!='null'">
+                and product=#{product}
+            </when>
+        </choose>
+        GROUP BY company order by count(*) DESC) as F
+        ON E.company = F.company))as G
+        LEFT JOIN
+        (select company,count(*) as "gas4" from competitor
+        where gastype="甲烷、一氧化碳"
+        <choose>
+            <when test="product != null and product != '' and product!='null'">
+                and product=#{product}
+            </when>
+        </choose>
+        GROUP BY company order by count(*) DESC) as H
+        ON G.company = H.company)) as M ORDER BY
+        totalgasnumber DESC;
+    </select>
+
+    <select id="selectOtherGas" resultType="io.renren.modules.sys.entity.OtherGasEntity">
+        SELECT * FROM(SELECT E.*,IFNULL( F.gas3, 0 ) AS "otherGas" FROM((
+        SELECT C.*, IFNULL( D.gas2, 0 ) AS "propane" FROM( (
+        SELECT A.*, IFNULL( B.gas1, 0 ) AS "methane" FROM( ( SELECT company, count(*) AS "total" FROM competitor WHERE 1=1
+        <choose>
+            <when test="product != null and product != '' and product!='null'">
+                and product=#{product}
+            </when>
+        </choose>
+        GROUP BY company ORDER BY count(*) DESC LIMIT 20 ) AS A
+        LEFT JOIN ( SELECT company, count(*) AS "gas1" FROM competitor WHERE gastype = "甲烷"
+        <choose>
+            <when test="product != null and product != '' and product!='null'">
+                and product=#{product}
+            </when>
+        </choose>
+        GROUP BY company ORDER BY count(*) DESC ) AS B ON A.company = B.company
+        )) AS C
+        LEFT JOIN ( SELECT company, count(*) AS "gas2" FROM competitor WHERE gastype = "丙烷"
+        <choose>
+            <when test="product != null and product != '' and product!='null'">
+                and product=#{product}
+            </when>
+        </choose>
+        GROUP BY company ORDER BY count(*) DESC ) AS D ON C.company = D.company
+        )) AS E
+        LEFT JOIN (
+        SELECT company, count(*) AS "gas3" FROM competitor WHERE ( gastype != '甲烷' AND gastype != '丙烷' )
+        <choose>
+            <when test="product != null and product != '' and product!='null'">
+                and product=#{product}
+            </when>
+        </choose>
+        GROUP BY  company ORDER BY count(*) DESC ) AS F ON E.company = F.company )) AS F
+        ORDER BY total DESC;
+    </select>
+
+    <select id="selectMethaneSensor" resultType="io.renren.modules.sys.entity.PropaneSensorEntity">
+        SELECT A.*, A.usefacturernumber /( SELECT count(*) AS "usefacturernumber" FROM competitor
+        where 1=1
+        <choose>
+            <when test="product !=null and product!='' and product!='undefined' and product!='null'">
+                and  product=#{product}
+            </when>
+        </choose>
+        <if test="gasType !=null and gasType!='' and gasType!='undefined' and gasType!='null'">
+            and gastype=#{gasType}
+        </if>
+        )* 100 AS "totalproportion"
+        FROM
+        ( SELECT any_value(keymodels) AS "value", any_value(keymanufacturers) AS "manufacturer", count(*) AS "usefacturernumber" FROM competitor
+        where 1=1
+        <choose>
+            <when test="product !=null and product!='' and product!='undefined' and product!='null'">
+                and  product=#{product}
+            </when>
+        </choose>
+        <if test="gasType !=null and gasType!='' and gasType!='undefined' and gasType!='null'">
+            and gastype=#{gasType}
+        </if>
+        GROUP BY keymodels ORDER BY count(*) DESC ) AS A;
+    </select>
+
+    <select id="selectMethaneRange" resultType="io.renren.modules.sys.entity.ProductEntity" >
+        select rangey as "name",count(*) as "value" from competitor
+        where gastype="甲烷"
+        <choose>
+            <when test="product != null and product != 'null'">
+                and product=#{product}
+            </when>
+        </choose>
+
+        GROUP BY rangey order by count(*) DESC ;
+    </select>
+
+    <select id="selectMethaneAlarmPoint" resultType="io.renren.modules.sys.entity.ProductEntity">
+        select alarm as "name",count(*) as "value" from competitor
+        where gastype="甲烷"
+        <choose>
+            <when test="product != null and product != 'null'">
+                and product=#{product}
+            </when>
+        </choose>
+        GROUP BY alarm order by count(*) DESC limit 0,10;
+    </select>
+
+    <select id="selectPropaneRange" resultType="io.renren.modules.sys.entity.ProductEntity">
+        select rangey as "name",count(*) as "value" from competitor
+        where gastype="丙烷"
+        <choose>
+            <when test="product != null and product != 'null'">
+                and product=#{product}
+            </when>
+        </choose>
+        GROUP BY rangey order by count(*) DESC;
+    </select>
+
+    <select id="selectPropaneAlarmPoint" resultType="io.renren.modules.sys.entity.ProductEntity">
+        select alarm as "name",count(*) as "value" from competitor
+        where gastype="丙烷"
+        <choose>
+            <when test="product != null and product != 'null'">
+                and product=#{product}
+            </when>
+        </choose>
+        GROUP BY alarm order by count(*) DESC;
+    </select>
+
+    <select id="selectCarbonMonoxideRange" resultType="io.renren.modules.sys.entity.ProductEntity">
+        select rangey as "name",count(*) as "value" from competitor
+        where gastype="一氧化碳"
+        <choose>
+            <when test="product != null and product != 'null'">
+                and product=#{product}
+            </when>
+        </choose>
+        GROUP BY rangey order by count(*) DESC;
+    </select>
+
+    <select id="selectCarbonMonoxideAlarmPoint" resultType="io.renren.modules.sys.entity.ProductEntity">
+        select alarm as "name",count(*) as "value" from competitor
+        where gastype="一氧化碳"
+        <choose>
+            <when test="product != null and product != 'null'">
+                and product=#{product}
+            </when>
+        </choose>
+        GROUP BY alarm order by count(*) DESC ;
+    </select>
+
+    <insert id="saveList" parameterType="java.util.List">
+
+    insert into competitor(
+    company,
+    categor,
+    product,
+    model,
+    usedname,
+    producer,
+    manufacturer,
+    fertificate,
+    firstissuedate,
+    renewaldate,
+    termvalidity,
+    implementationrule,
+    certification,
+    standardnumber,
+    inspectionnumber,
+    report,
+    inspectioncategory,
+    inspectionitems,
+    device,
+    keymodels,
+    keymanufacturers,
+    powerupply,
+    gastype,
+    rangey,
+    alarm,
+    useenvironment,
+    explosionproof,
+    wording,
+    material,
+    workingmode,
+    samplingmode,
+    usecondition,
+    displayfunction,
+    displaydevice,
+    difference,
+    patch,
+    outputnode,
+    productpicture,
+    inspectionorganization,
+    organization,
+    examine,
+    approval,
+    productcertificate,
+    inspectionreport
+
+    )
+
+    values
+    <foreach collection="list" item="item" index="index" separator=",">
+        (
+        #{item.company},
+        #{item.categor},
+        #{item.product},
+        #{item.model},
+        #{item.usedname},
+        #{item.producer},
+        #{item.manufacturer},
+        #{item.fertificate},
+        #{item.firstissuedate},
+        #{item.renewaldate},
+        #{item.termvalidity},
+        #{item.implementationrule},
+        #{item.certification},
+        #{item.standardnumber},
+        #{item.inspectionnumber},
+        #{item.report},
+        #{item.inspectioncategory},
+        #{item.inspectionitems},
+        #{item.device},
+        #{item.keymodels},
+        #{item.keymanufacturers},
+        #{item.powerupply},
+        #{item.gastype},
+        #{item.rangey},
+        #{item.alarm},
+        #{item.useenvironment},
+        #{item.explosionproof},
+        #{item.wording},
+        #{item.material},
+        #{item.workingmode},
+        #{item.samplingmode},
+        #{item.usecondition},
+        #{item.displayfunction},
+        #{item.displaydevice},
+        #{item.difference},
+        #{item.patch},
+        #{item.outputnode},
+        #{item.productpicture},
+        #{item.inspectionorganization},
+        #{item.organization},
+        #{item.examine},
+        #{item.approval},
+        #{item.productcertificate},
+        #{item.inspectionreport}
+
+
+        )
+    </foreach>
+</insert>
+
+    <insert id="save" parameterType="java.util.List">
+
+        replace into competitor(
+        company,
+        categor,
+        product,
+        model,
+        usedname,
+        producer,
+        manufacturer,
+        fertificate,
+        firstissuedate,
+        renewaldate,
+        termvalidity,
+        implementationrule,
+        certification,
+        standardnumber,
+        inspectionnumber,
+        report,
+        inspectioncategory,
+        inspectionitems,
+        device,
+        keymodels,
+        keymanufacturers,
+        powerupply,
+        gastype,
+        rangey,
+        alarm,
+        useenvironment,
+        explosionproof,
+        wording,
+        material,
+        workingmode,
+        samplingmode,
+        usecondition,
+        displayfunction,
+        displaydevice,
+        difference,
+        patch,
+        outputnode,
+        productpicture,
+        inspectionorganization,
+        organization,
+        examine,
+        approval,
+        productcertificate,
+        inspectionreport
+
+        )
+
+        values
+        <foreach collection="list" item="item" index="index" separator=",">
+            (
+            #{item.company},
+            #{item.categor},
+            #{item.product},
+            #{item.model},
+            #{item.usedname},
+            #{item.producer},
+            #{item.manufacturer},
+            #{item.fertificate},
+            #{item.firstissuedate},
+            #{item.renewaldate},
+            #{item.termvalidity},
+            #{item.implementationrule},
+            #{item.certification},
+            #{item.standardnumber},
+            #{item.inspectionnumber},
+            #{item.report},
+            #{item.inspectioncategory},
+            #{item.inspectionitems},
+            #{item.device},
+            #{item.keymodels},
+            #{item.keymanufacturers},
+            #{item.powerupply},
+            #{item.gastype},
+            #{item.rangey},
+            #{item.alarm},
+            #{item.useenvironment},
+            #{item.explosionproof},
+            #{item.wording},
+            #{item.material},
+            #{item.workingmode},
+            #{item.samplingmode},
+            #{item.usecondition},
+            #{item.displayfunction},
+            #{item.displaydevice},
+            #{item.difference},
+            #{item.patch},
+            #{item.outputnode},
+            #{item.productpicture},
+            #{item.inspectionorganization},
+            #{item.organization},
+            #{item.examine},
+            #{item.approval},
+            #{item.productcertificate},
+            #{item.inspectionreport}
+
+
+            )
+        </foreach>
+    </insert>
+
+
+</mapper>

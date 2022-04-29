@@ -1,0 +1,28 @@
+.form-pro {
+    width: 32%;
+    height: 34px;
+    padding: 6px 8px;
+    font-size: 14px;
+    line-height: 1.42857143;
+    color: #555;
+    background-color: #fff;
+    background-image: none;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+.ui-jqgrid-hdiv .ui-jqgrid-hbox .ui-jqgrid-htable .ui-jqgrid-labels th{
+    font-size: 12px;
+    text-align: center;
+    vertical-align:middle;
+}
+/*表格*/
+.ui-jqgrid-bdiv .ui-jqgrid-btable .jqgrow  td {
+    text-align: center ;
+    vertical-align: middle ;
+}
+#mybtn {
+    display: flex!important;
+    justify-content: center!important;
+}
+

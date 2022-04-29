@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.renren.modules.sys.dao.ShangbiaoDao">
+
+	<!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="io.renren.modules.sys.entity.ShangbiaoEntity" id="shangbiaoMap">
+        <result property="id" column="id"/>
+        <result property="applicationDate" column="application_date"/>
+        <result property="trademarkImages" column="trademark_images"/>
+        <result property="trademarkName" column="trademark_name"/>
+        <result property="registrationNumber" column="registration_number"/>
+        <result property="interClassification" column="i_classification"/>
+        <result property="trademarkState" column="trademark_state"/>
+        <result property="enrollDate" column="enroll_date"/>
+    </resultMap>
+
+
+    <select id="selectAll" resultType="io.renren.modules.sys.excel.ShangbiaoExcel">
+        select * from shangbiao
+    </select>
+
+
+    <insert id="save" parameterType="java.util.List">
+
+        replace into shangbiao(
+        application_date,
+        trademark_name,
+        registration_number,
+        inter_classification,
+        trademark_state,
+        enroll_date
+        )
+
+        values
+        <foreach collection="list" item="item" index="index" separator=",">
+            (
+            #{item.applicationDate},
+            #{item.trademarkName},
+            #{item.registrationNumber},
+            #{item.interClassification},
+            #{item.trademarkState},
+            #{item.enrollDate}
+            )
+        </foreach>
+    </insert>
+
+</mapper>

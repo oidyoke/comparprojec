@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <link rel="stylesheet" type="text/css" href="http://localhost:8080/renren-admin/statics/layui/css/layui.css">
+    <title></title>
+		<#include "/header.html">
+</head>
+<body>
+<div id="rrapp" v-cloak>
+    <div v-show="showList">
+        <div class="grid-btn">
+            <a class="btn btn-success" @click= "query"><i class="fa fa-search"></i>查询</a>
+			<#if shiro.hasPermission("sys:shangbiao:save")>
+            <a class="btn btn-primary" @click="add"><i class="fa fa-plus"></i>&nbsp;新增</a>
+			</#if>
+			<#if shiro.hasPermission("sys:shangbiao:update")>
+            <a class="btn btn-primary" @click="update"><i class="fa fa-pencil-square-o"></i>&nbsp;修改</a>
+			</#if>
+			<#if shiro.hasPermission("sys:shangbiao:delete")>
+            <a class="btn btn-primary" @click="del"><i class="fa fa-trash-o"></i>&nbsp;删除</a>
+			</#if>
+
+            <a class="btn btn-primary" onclick="selectFile()"><i class="fa fa-download" ></i> 导入</a>
+
+           <input id="upfile" type="file" onchange="doUpload()" name="upfile" accept=".xls,.xlsx"  style="display:none"/>
+  <a class="btn btn-primary" href="http://localhost:8080/renren-admin/sys/shangbiao/downloadExcel"><i class="fa fa-upload"></i>&nbsp;导出</a>
+   <a class="btn btn-default" @click="vh1">点击展开/关闭</a>
+    <a class="btn btn-default" @click="Reseting1">查询重置</a>
+
+        </div>
+        <table id="jqGrid"></table>
+        <div id="jqGridPager"></div>
+    </div>
+
+    <div v-show="!showList" class="panel panel-default">
+        <div class="panel-heading">{{title}}</div>
+        <form class="form-horizontal">
+														                    <div class="form-group">
+                        <div class="col-sm-2 control-label">申请日期</div>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" v-model="shangbiao.applicationdate" placeholder="申请日期"/>
+                        </div>
+                    </div>
+											                    <div class="form-group">
+                        <div class="col-sm-2 control-label">商标图片</div>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" v-model="shangbiao.trademarkimages" placeholder="商标图片"/>
+                        </div>
+                    </div>
+											                    <div class="form-group">
+                        <div class="col-sm-2 control-label">商标名称</div>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" v-model="shangbiao.trademarkname" placeholder="商标名称"/>
+                        </div>
+                    </div>
+											                    <div class="form-group">
+                        <div class="col-sm-2 control-label">注册号</div>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" v-model="shangbiao.registrationnumber" placeholder="注册号"/>
+                        </div>
+                    </div>
+											                    <div class="form-group">
+                        <div class="col-sm-2 control-label">国际分类</div>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" v-model="shangbiao.iclassification" placeholder="国际分类"/>
+                        </div>
+                    </div>
+											                    <div class="form-group">
+                        <div class="col-sm-2 control-label">商标状态</div>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" v-model="shangbiao.trademarkstate" placeholder="商标状态"/>
+                        </div>
+                    </div>
+											                    <div class="form-group">
+                        <div class="col-sm-2 control-label">注册公告日期</div>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" v-model="shangbiao.enrolldate" placeholder="注册公告日期"/>
+                        </div>
+                    </div>
+							            <div class="form-group">
+                <div class="col-sm-2 control-label"></div>
+                <input type="button" class="btn btn-primary" id="btnSaveOrUpdate" data-loading-text="保存中..." @click="saveOrUpdate" value="确定"/>
+                &nbsp;&nbsp;<input type="button" class="btn btn-warning" @click="reload" value="返回"/>
+            </div>
+        </form>
+    </div>
+</div>
+<script type="text/javascript" src="${request.contextPath}/statics/layui/layui.js?_${.now?long}"></script>
+<script src="http://localhost:8080/renren-admin/statics/js/a.js?_${.now?long}"></script>
+<script src="${request.contextPath}/statics/js/a.js?_${.now?long}"></script>
+<script src="${request.contextPath}/statics/js/modules/sys/shangbiao.js?_${.now?long}"></script>
+
+<script type="text/javascript"></script>
+<script>
+    layui.use('upload', function(){
+        var upload = layui.upload;
+        var uploadInst = upload.render({
+            elem: '#images1',//绑定元素
+            url: baseURL+'sys/shangbiao/upload' ,//上传接口
+            done: (res) => {
+                console.log(res)
+                vm.competitor.productpicture = res.msg
+                vm.productpicture = res.msg
+            },
+            error: function(){
+
+            },
+            accept: 'file'
+        });
+    });
+    layui.use('upload', function(){
+        var upload = layui.upload;
+        var uploadInst = upload.render({
+            elem: '#file1',//绑定元素
+            url: baseURL+'sys/shangbiao/upload' ,//上传接口
+            done: (res) => {
+                console.log(res)
+                vm.competitor.productcertificate = res.msg
+                vm.productcertificate = res.msg
+            },
+            error: function(){
+
+            },
+            accept: 'file'
+        });
+    });
+    layui.use('upload', function(){
+        var upload = layui.upload;
+        var uploadInst = upload.render({
+            elem: '#file2',//绑定元素
+            url: baseURL+'sys/shangbiao/upload' ,//上传接口
+            done: (res) => {
+                console.log(res)
+                vm.competitor.inspectionreport = res.msg
+                vm.inspectionreport = res.msg
+            },
+            error: function(){
+
+            },
+            accept: 'file'
+        });
+    });
+    function selectFile()
+    {
+        document.getElementById("upfile").click();
+    }
+    function doUpload(){
+        $.ajaxFileUpload({
+            url : baseURL+"sys/shangbiao/import",
+            type : "POST",
+            dataType:"json",
+            fileElementId :"upfile",
+            success:function (data) {
+                alert(data.msg);
+                window.location.reload();
+                alert('导入成功!');
+            },
+            error:function(erro){
+                console.log("erro:"+erro);
+
+            }
+        });
+    };
+</script>
+</body>
+</html>

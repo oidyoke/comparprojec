@@ -1,0 +1,774 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/html" xmlns="http://www.w3.org/1999/html">
+<head>
+
+    <link rel="stylesheet" type="text/css" href="http://localhost:8080/renren-admin/statics/layui/css/layui.css">
+
+    <title></title>
+    <meta name="viewport" content="width=device-width, initial-scale=0.5,user-scalable=yes" />
+    <#include "/header.html">
+    <style>
+        #mybtn {
+            display: flex!important;
+            justify-content: center!important;
+        }
+        #myDialog{
+            position:absolute;
+            left: 10%;
+            top: 0%;
+            width: 1000px;
+            height: 550px;
+            display: none;
+            /*background-color: skyblue;*/
+        }
+
+        #closeDialog{
+            width: 30px;
+            height: 30px;
+            font-size:x-large;
+            position: relative;
+            left:99%;
+            top: 0;
+        }
+        iframe {
+            width: 100%;
+            height: 100%;
+            border: 1px solid black;
+            /*background-color: lightgray;*/
+        }
+
+        #myDialog1{
+            position:absolute;
+            left: 20%;
+            top: 5%;
+            width: 800px;
+            height: 530px;
+            display: none;
+            background-color: white;
+        }
+        #closeDialog1{
+            width: 30px;
+            height: 30px;
+            font-size:x-large;
+            position: relative;
+            left:99%;
+            top: 0;
+        }
+
+    </style>
+</head>
+<body>
+<div id="rrapp" v-cloak>
+    <div v-show="showList">
+        <div class="grid-btn"  onkeydown="entersearch()">
+            <div class="form-group col-sm-2">
+                <input type="text" v-model.trim="q.company" placeholder="公司名称" class="form-control" id="demo"/>
+            </div>
+            <div class="form-group col-sm-2">
+                <select type="text" class="form-control" onchange="showProduct(this)">
+                    <option disabled selected hidden style="color: grey">产品名称</option>
+                    <option value=" "> </option>
+                    <option value="家用可燃气体探测器">家用可燃气体探测器</option>
+                    <option value="工业及商业用途便携式可燃气体探测器">工业及商业用途便携式可燃气体探测器</option>
+                    <option value="工业及商业用途点型可燃气体探测器">工业及商业用途点型可燃气体探测器</option>
+                </select>
+            </div>
+            <div class="form-group col-sm-2">
+                <input type="text" class="form-control" v-model.trim="q.model" placeholder="产品型号"/>
+            </div>
+            <div class="form-group col-sm-2">
+                <input type="text"  class="form-control" v-model.trim="q.fertificate" placeholder="证书编号"/>
+            </div>
+            <div class="form-group col-sm-2">
+                <select type="text" class="form-control" onchange="showStandardNumber(this)">
+                    <option disabled selected hidden>标准号</option>
+                    <option value=" "></option>
+                    <option value="GB15322.1-2019">GB15322.1-2019</option>
+                    <option value="GB15322.2-2019">GB15322.2-2019</option>
+                    <option value="GB15322.1-2003">GB15322.3-2019</option>
+                </select>
+            </div>
+            <div class="form-group col-sm-2">
+                <input type="text" class="form-control" v-model.trim="q.keymodels" placeholder="关键件型号" />
+            </div>
+            <div id="row2" style="display: none">
+                <div class="form-group col-sm-2">
+                    <input type="text" class="form-control" v-model.trim="q.keymanufacturers" placeholder="关键器件生产厂家" />
+                </div>
+                <div class="form-group col-sm-2">
+                    <select type="text" class="form-control oneSelect" onchange="showPowerSupply(this)">
+                        <option disabled selected hidden style="color: grey">供电方式</option>
+                        <option value=" "></option>
+                    </select>
+                </div>
+                <div class="form-group col-sm-2">
+                    <select type="text" class="form-control twoSelect" onchange="showGasType(this)">
+                        <option disabled selected hidden style="color: grey">气体种类</option>
+                        <option value=" "></option>
+                    </select>
+                </div>
+                <div class="form-group col-sm-2">
+                    <select type="text" class="form-control threeSelect" onchange="showRangey(this)">
+                        <option disabled selected hidden style="color: grey">量程</option>
+                        <option value=" "></option>
+                    </select>
+                </div>
+                <div class="form-group col-sm-2">
+                    <select type="text" class="form-control fourSelect" onchange="showAlarm(this)">
+                        <option disabled selected hidden style="color: red!important;">报警设定值</option>
+                        <option value=" "></option>
+                    </select>
+                </div>
+                <div class="form-group col-sm-2">
+                    <!--                <input type="text" class="form-control" v-model="q.material" placeholder="外壳材质"/>-->
+                    <select type="text" class="form-control" onchange="showMaterial(this)">
+                        <option disabled selected hidden >外壳材质</option>
+                        <option value=""></option>
+                        <option value="塑料">塑料</option>
+                        <option value="金属">金属</option>
+                        <option value="面板部分为金属，背板部分为塑料">面板部分为金属，背板部分为塑料</option>
+                        <option value="气体采样部分为塑料，其他部分为金属">气体采样部分为塑料，其他部分为金属</option>
+                        <option value="上盖侧面为金属，其他部分为塑料">上盖侧面为金属，其他部分为塑料</option>
+
+                    </select>
+                </div>
+                <div class="form-group col-sm-2">
+                    <!--                <input type="text" class="form-control" v-model="q.workingMode" placeholder="工作方式"/>-->
+                    <select type="text" class="form-control" onchange="workingMode(this)">
+                        <option disabled selected hidden >工作方式</option>
+                        <option value=""></option>
+                        <option value="独立式">独立式</option>
+                        <option value="系统式">系统式</option>
+                        <option value="连续工作型">连续工作型</option>
+                    </select>
+                </div>
+                <div class="form-group col-sm-2">
+                    <select type="text" class="form-control" onchange="samplingMode(this)">
+                        <option disabled selected hidden >采样方式</option>
+                        <option value=""></option>
+                        <option value="自由扩散式">自由扩散式</option>
+                    </select>
+                </div>
+                <div class="form-group col-sm-2">
+
+                    <select type="text" class="form-control" onchange="useCondition(this)">
+                        <option disabled selected hidden >使用工作条件</option>
+                        <option value=""></option>
+                        <option value="室内使用型">室内使用型</option>
+                        <option value="室外使用型">室外使用型</option>
+                    </select>
+
+                </div>
+                <div class="form-group col-sm-2">
+                    <select type="text" class="form-control" onchange="displayFunction(this)">
+                        <option disabled selected hidden >显示功能</option>
+                        <option value=""></option>
+                        <option value="具有可燃气体浓度显示">具有可燃气体浓度显示</option>
+                    </select>
+                </div>
+                <div class="form-group col-sm-2">
+                    <select type="text" class="form-control" onchange="outputNode(this)">
+                        <option disabled selected hidden >输出节量点数</option>
+                        <option value=""></option>
+                        <option value="1组">1组</option>
+                        <option value="2组">2组</option>
+                        <option value="3组">3组</option>
+                        <option value="4组">4组</option>
+                        <option value="5组">5组</option>
+                        <option value="6组">6组</option>
+                    </select>
+                </div>
+                <div class="form-group col-sm-2">
+                    <select type="text" class="form-control fiveSelect" onchange="showInspectionOrganization(this)">
+                        <option disabled selected hidden style="color: #555">检验机构</option>
+                        <option value=" "></option>
+                    </select>
+                </div>
+            </div>
+            <a class="btn btn-success" @click= "query"><i class="fa fa-search"></i>查询</a>
+            <#if shiro.hasPermission("sys:competitor:save")>
+            <a class="btn btn-info" @click="add" id="add1"><i class="fa fa-plus"></i>&nbsp;新增</a>
+        </#if>
+        <#if shiro.hasPermission("sys:competitor:update")>
+        <a class="btn btn-warning" @click="update"><i class="fa fa-pencil-square-o"></i>&nbsp;修改</a>
+    </#if>
+    <#if shiro.hasPermission("sys:competitor:delete")>
+    <a class="btn btn-danger" @click="del"><i class="fa fa-trash-o"></i>&nbsp;删除</a>
+</#if>
+
+<#if shiro.hasPermission("sys:competitor:importExcel")>
+<a class="btn btn-primary" onclick="selectFile()"><i class="fa fa-download" ></i> 导入</a>
+</#if>
+
+<input id="upfile" type="file" onchange="doUpload()" name="upfile" accept=".xls,.xlsx"  style="display:none"/>
+
+<#if shiro.hasPermission("sys:competitor:downloadExcel")>
+<a class="btn btn-primary" href="http://192.168.5.171:8080/renren-admin/sys/competitor/downloadExcel"><i class="fa fa-upload"></i>&nbsp;导出</a>
+</#if>
+
+<script>
+
+</script>
+<a class="btn btn-default" @click="vh">点击展开/关闭</a>
+<a class="btn btn-default" @click="Reseting">查询重置</a>
+</div>
+<table id="jqGrid"></table>
+<div id="jqGridPager"></div>
+</div>
+
+<div v-show="!showList" class="panel panel-default">
+    <div class="panel-heading">{{title}}</div>
+    <form class="form-horizontal">
+        <div class="form-group col-sm-6">
+            <div class="col-sm-3 control-label">公司名称</div>
+            <div class="col-sm-9">
+                <input type="text" name="company" class="form-control" v-model="competitor.company" placeholder="公司名称" onblur="if(this.value.replace(/^ +| +$/g,'')=='')alert('公司名称不能为空!')"/>
+            </div>
+        </div>
+        <div class="form-group col-sm-6">
+            <div class="col-sm-3 control-label">产品类别</div>
+            <div class="col-sm-9">
+                <select type="text" class="form-control" v-model="competitor.categor" placeholder="产品类别"/>
+                <option value="火灾探测报警产品">火灾探测报警产品</option>
+                </select>
+            </div>
+        </div>
+        <div class="form-group col-sm-6">
+            <div class="col-sm-3 control-label">产品名称</div>
+            <div class="col-sm-9">
+                <select type="text" class="form-control" v-model="competitor.product" placeholder="产品名称"/>
+                <option>/</option>
+                <option value="家用可燃气体探测器">家用可燃气体探测器</option>
+                <option value="工业及商业用途便携式可燃气体探测器">工业及商业用途便携式可燃气体探测器</option>
+                <option value="工业及商业用途点型可燃气体探测器">工业及商业用途点型可燃气体探测器</option>
+                </select>
+            </div>
+        </div>
+        <div class="form-group col-sm-6">
+            <div class="col-sm-3 control-label">产品型号</div>
+            <div class="col-sm-9">
+                <input type="text" name="model" class="form-control" v-model="competitor.model" placeholder="产品型号"/>
+            </div>
+        </div>
+        <div class="form-group col-sm-6">
+            <div class="col-sm-3 control-label">公司曾用名</div>
+            <div class="col-sm-9">
+                <input type="text" class="form-control" v-model="competitor.usedname" placeholder="公司曾用名"/>
+            </div>
+        </div>
+        <div class="form-group col-sm-6">
+            <div class="col-sm-3 control-label">生产者</div>
+            <div class="col-sm-9">
+                <input type="text" class="form-control" v-model="competitor.producer" placeholder="生产者"/>
+            </div>
+        </div>
+        <div class="form-group col-sm-6">
+            <div class="col-sm-3 control-label">生产企业</div>
+            <div class="col-sm-9">
+                <input type="text" class="form-control" v-model="competitor.manufacturer" placeholder="生产企业"/>
+            </div>
+        </div>
+        <div class="form-group col-sm-6">
+            <div class="col-sm-3 control-label">证书编号 </div>
+            <div class="col-sm-9">
+
+                <input type="text" name="fertificate" class="form-control" v-model="competitor.fertificate" placeholder="证书编号" onblur="if(this.value.replace(/^ +| +$/g,'')=='')alert('证书编号不能为空!')"/>
+            </div>
+        </div>
+        <div class="form-group col-sm-6">
+            <div class="col-sm-3 control-label">首次发证日期</div>
+            <div class="col-sm-9">
+                <input type="text" id="text1" class="form-control" v-model="competitor.firstissuedate" placeholder="首次发证日期"/>
+            </div>
+        </div>
+        <div class="form-group col-sm-6">
+            <div class="col-sm-3 control-label">发（换）证日期</div>
+            <div class="col-sm-9">
+                <input type="text" id="text2" class="form-control" v-model="competitor.renewaldate" placeholder="发（换）证日期"/>
+            </div>
+        </div>
+        <div class="form-group col-sm-6">
+            <div class="col-sm-3 control-label">有效期</div>
+            <div class="col-sm-9">
+                <input type="text" id="text3" class="form-control" v-model="competitor.termvalidity" placeholder="有效期"/>
+            </div>
+        </div>
+        <div class="form-group col-sm-6">
+            <div class="col-sm-3 control-label">实施规则</div>
+            <div class="col-sm-9">
+                <select type="text" class="form-control" v-model="competitor.implementationrule" placeholder="实施规则"/>
+                <option>/</option>
+                <option value="CCCF-CPRZ-14：2019">CCCF-CPRZ-14：2019</option>
+                </select>
+            </div>
+        </div>
+        <div class="form-group col-sm-6">
+            <div class="col-sm-3 control-label">认证模式</div>
+            <div class="col-sm-9">
+                <select type="text" class="form-control" v-model="competitor.certification" placeholder="认证模式"/>
+                <option value="型式试验+企业质量保证能力检查和产品一致性检查+获证后监督">型式试验+企业质量保证能力检查和产品一致性检查+获证后监督</option>
+                </select>
+            </div>
+        </div>
+        <div class="form-group col-sm-6">
+            <div class="col-sm-3 control-label">标准号</div>
+            <div class="col-sm-9">
+                <select type="text" class="form-control" v-model="competitor.standardnumber" placeholder="标准号"/>
+                <option>/</option>
+                <option value="GB15322.1-2019">GB15322.1-2019</option>
+                <option value="GB15322.2-2019">GB15322.2-2019</option>
+                <option value="GB15322.1-2003">GB15322.3-2019</option>
+
+                </select>
+            </div>
+        </div>
+        <div class="form-group col-sm-6">
+            <div class="col-sm-3 control-label">检验报告编号</div>
+            <div class="col-sm-9">
+                <input type="text" name="inspectionnumber" class="form-control" v-model="competitor.inspectionnumber" placeholder="检验报告编号" onblur="if(this.value.replace(/^ +| +$/g,'')=='')alert('检验报告编号不能为空!')"/>
+            </div>
+        </div>
+        <div class="form-group col-sm-6">
+            <div class="col-sm-3 control-label">报告签发日期</div>
+            <div class="col-sm-9">
+                <input type="text" id="text4" class="form-control" v-model="competitor.report" placeholder="报告签发日期"/>
+            </div>
+        </div>
+        <div class="form-group col-sm-6">
+            <div class="col-sm-3 control-label">检验类别</div>
+            <div class="col-sm-9">
+                <select type="text" class="form-control" v-model="competitor.inspectioncategory" placeholder="检验类别"/>
+                <option>/</option>
+                <option value="型式试验">型式试验</option>
+                <option value="分型试验">分型实验</option>
+                <option value="型式试验、分型试验">型式试验、分型试验</option>
+                </select>
+            </div>
+        </div>
+        <div class="form-group col-sm-6">
+            <div class="col-sm-3 control-label">检验项目</div>
+            <div class="col-sm-9">
+                <select type="text" class="form-control" v-model="competitor.inspectionitems" placeholder="检验项目"/>
+                <option>/</option>
+                <option value="全部适用项目">全部适用项目</option>
+                <option value="全部适用项目 部分项目">全部适用项目、部分项目</option>
+                <option value="全部适用项目（除GB15322.1-2019中5.2.7防爆型式的要求外）">全部适用项目（除GB15322.1-2019中5.2.7防爆型式的要求外）</option>
+                <option value="全部适用项目（除GB15322.1-2019中5.2.10防爆型式的要求外）">全部适用项目（除GB15322.1-2019中5.2.10防爆型式的要求外）</option>
+                </select>
+            </div>
+        </div>
+        <div class="form-group col-sm-6">
+            <div class="col-sm-3 control-label">关键器件</div>
+            <div class="col-sm-9">
+                <select type="text" class="form-control" v-model="competitor.device" placeholder="关键器件"/>
+                <option value="传感器">传感器</option>
+                </select>
+            </div>
+        </div>
+        <div class="form-group col-sm-6">
+            <div class="col-sm-3 control-label">关键件型号</div>
+            <div class="col-sm-9">
+                <input type="text" class="form-control" v-model="competitor.keymodels" placeholder="关键件型号" />
+            </div>
+        </div>
+        <div class="form-group col-sm-6">
+            <div class="col-sm-3 control-label">关键件生产厂家</div>
+            <div class="col-sm-9">
+                <input type="text" class="form-control" v-model="competitor.keymanufacturers" placeholder="关键器件生产厂家"/>
+            </div>
+        </div>
+        <div class="form-group col-sm-6">
+            <div class="col-sm-3 control-label">供电方式</div>
+            <div class="col-sm-9">
+                <select type="text" class="form-control" v-model="competitor.powerupply" placeholder="供电方式"/>
+                <option value=" "></option>
+                <option value="AC220V">AC220V</option>
+                <option value="AC220V、DC4.5V">AC220V、DC4.5V</option>
+                <option value="DC1.5V">DC1.5V</option>
+                <option value="DC24V">DC24V</option>
+                <option value="DC3V">DC3V</option>
+                <option value="DC3.6V">DC3.6V</option>
+                <option value="DC3.7V">DC3.7V</option>
+                <option value="DC36V">DC36V</option>
+                <option value="DC4.5V">DC4.5V</option>
+                <option value="DC7.2V">DC7.2V</option>
+                <option value="DC9V">DC9V</option>
+                </select>
+            </div>
+        </div>
+        <div class="form-group col-sm-6">
+            <div class="col-sm-3 control-label">气体种类</div>
+            <div class="col-sm-9">
+                <select type="text" class="form-control" v-model="competitor.gastype" placeholder="气体种类"/>
+                <option value=" "></option>
+                <option value="甲烷">甲烷</option>
+                <option value="丙烷">丙烷</option>
+                <option value="一氧化碳">一氧化碳</option>
+                <option value="甲烷、丙烷">甲烷、丙烷</option>
+                <option value="甲烷、氢气">甲烷、丙烷</option>
+                <option value="甲烷、一氧化碳">甲烷、一氧化碳</option>
+                <option value="甲烷、异丁烷">甲烷、异丁烷</option>
+                <option value="甲烷、丙烷、异丁烷">甲烷、丙烷、异丁烷</option>
+                <option value="甲烷、氢气、异丁烷">甲烷、氢气、异丁烷</option>
+                <option value="甲烷、丙烷、异丁烷、氢气">甲烷、丙烷、异丁烷、氢气</option>
+                </select>
+            </div>
+        </div>
+        <div class="form-group col-sm-6">
+            <div class="col-sm-3 control-label">量程</div>
+            <div class="col-sm-9">
+                <select type="text" class="form-control" v-model="competitor.rangey" placeholder="量程"/>
+                <option value=" "></option>
+                <option value="5%LEL">5%LEL</option>
+                <option value="6%LEL">6%LEL</option>
+                <option value="7%LEL">7%LEL</option>
+                <option value="8%LEL">8%LEL</option>
+                <option value="9%LEL">9%LEL</option>
+                <option value="10%LEL">10%LEL</option>
+                <option value="11%LEL">11%LEL</option>
+                <option value="15%LEL">15%LEL</option>
+                <option value="20%LEL">20%LEL</option>
+                <option value="25%LEL">25%LEL</option>
+                <option value="25%LEL">25%LEL</option>
+                <option value="150ppm">150ppm</option>
+                <option value="200ppm">200ppm</option>
+                <option value="10%LEL、150ppm">10%LEL、150ppm</option>
+                <option value="150×10-6（体积分数）">150×10-6（体积分数）</option>
+                <option value="160×10-6（体积分数）">160×10-6（体积分数）</option>
+                <option value="190×10-6（体积分数）">190×10-6（体积分数）</option>
+                <option value="200×10-6（体积分数）">200×10-6（体积分数）</option>
+                <option value="220×10-6（体积分数）">220×10-6（体积分数）</option>
+                <option value="500×10-6（体积分数）">500×10-6（体积分数）</option>
+                <option value="999×10-6（体积分数）">999×10-6（体积分数）</option>
+                <option value="低限10%LE、高限50%LEL">低限10%LE、高限50%LEL</option>
+                <option value="低限15%LE、高限50%LEL">低限15%LE、高限50%LEL</option>
+                <option value="低限20%LE、高限50%LEL">低限20%LE、高限50%LEL</option>
+                <option value="低限25%LEL、高限50%LEL">低限25%LEL、高限50%LEL</option>
+                <option value="低限25%LEL、高限51%LEL">低限25%LEL、高限51%LEL</option>
+                <option value="8%LEL、220×10-6（体积分数）">8%LEL、220×10-6（体积分数）</option>
+                <option value="10%LEL、150×10-6（体积分数）">10%LEL、150×10-6（体积分数）</option>
+                <option value="10%LEL、200×10-6（体积分数）">10%LEL、200×10-6（体积分数）</option>
+                <option value="低限10～25%LEL可调、高限50%LEL">低限10～25%LEL可调、高限50%LEL</option>
+                <option value="低限15～25%LEL可调、高限50%LEL">低限15～25%LEL可调、高限50%LEL</option>
+                <option value="低限15～25%LEL可调、高限50%LEL">低限15～25%LEL可调、高限50%LEL</option>
+                </select>
+            </div>
+        </div>
+        <div class="form-group col-sm-6">
+            <div class="col-sm-3 control-label">报警设定值</div>
+            <div class="col-sm-9">
+                <select type="text" class="form-control" v-model="competitor.alarm" placeholder="报警设定值"/>
+                <option value=" "></option>
+                <option value="5%LEL">5%LEL</option>
+                <option value="6%LEL">6%LEL</option>
+                <option value="7%LEL">7%LEL</option>
+                <option value="8%LEL">8%LEL</option>
+                <option value="9%LEL">9%LEL</option>
+                <option value="10%LEL">10%LEL</option>
+                <option value="11%LEL">11%LEL</option>
+                <option value="15%LEL">15%LEL</option>
+                <option value="20%LEL">20%LEL</option>
+                <option value="25%LEL">25%LEL</option>
+                <option value="25%LEL">25%LEL</option>
+                <option value="150ppm">150ppm</option>
+                <option value="200ppm">200ppm</option>
+                <option value="10%LEL、150ppm">10%LEL、150ppm</option>
+                <option value="150×10-6（体积分数）">150×10-6（体积分数）</option>
+                <option value="160×10-6（体积分数）">160×10-6（体积分数）</option>
+                <option value="190×10-6（体积分数）">190×10-6（体积分数）</option>
+                <option value="200×10-6（体积分数）">200×10-6（体积分数）</option>
+                <option value="220×10-6（体积分数）">220×10-6（体积分数）</option>
+                <option value="500×10-6（体积分数）">500×10-6（体积分数）</option>
+                <option value="999×10-6（体积分数）">999×10-6（体积分数）</option>
+                <option value="低限10%LE、高限50%LEL">低限10%LE、高限50%LEL</option>
+                <option value="低限15%LE、高限50%LEL">低限15%LE、高限50%LEL</option>
+                <option value="低限20%LE、高限50%LEL">低限20%LE、高限50%LEL</option>
+                <option value="低限25%LEL、高限50%LEL">低限25%LEL、高限50%LEL</option>
+                <option value="低限25%LEL、高限51%LEL">低限25%LEL、高限51%LEL</option>
+                <option value="8%LEL、220×10-6（体积分数）">8%LEL、220×10-6（体积分数）</option>
+                <option value="10%LEL、150×10-6（体积分数）">10%LEL、150×10-6（体积分数）</option>
+                <option value="10%LEL、200×10-6（体积分数）">10%LEL、200×10-6（体积分数）</option>
+                <option value="低限10～25%LEL可调、高限50%LEL">低限10～25%LEL可调、高限50%LEL</option>
+                <option value="低限15～25%LEL可调、高限50%LEL">低限15～25%LEL可调、高限50%LEL</option>
+                <option value="低限15～25%LEL可调、高限50%LEL">低限15～25%LEL可调、高限50%LEL</option>
+                </select>
+            </div>
+        </div>
+        <div class="form-group col-sm-6">
+            <div class="col-sm-3 control-label">使用环境</div>
+            <div class="col-sm-9">
+                <input type="text" class="form-control" v-model="competitor.useenvironment" placeholder="使用环境"/>
+            </div>
+        </div>
+        <div class="form-group col-sm-6">
+            <div class="col-sm-3 control-label">防爆标志</div>
+            <div class="col-sm-9">
+                <select type="text" class="form-control" v-model="competitor.explosionproof">
+                    <option>/</option>
+                    <option value="无">无</option>
+                    <option value="有">有</option>
+                </select>
+            </div>
+        </div>
+        <div class="form-group col-sm-6">
+            <div class="col-sm-3 control-label">警告用语</div>
+            <div class="col-sm-9">
+                <!--                            <input type="text" class="form-control" v-model="competitor.wording" placeholder="警告用语"/>-->
+                <select type="text" class="form-control" v-model="competitor.wording">
+                    <option value="无">无</option>
+                    <option value="有">有</option>
+                </select>
+            </div>
+        </div>
+        <div class="form-group col-sm-6">
+            <div class="col-sm-3 control-label">外壳材质</div>
+            <div class="col-sm-9">
+                <!--                            <input type="text" class="form-control" v-model="competitor.material" placeholder="外壳材质"/>-->
+                <select type="text" class="form-control" v-model="competitor.material">
+                    <option value=""></option>
+                    <option value="塑料">塑料</option>
+                    <option value="金属">金属</option>
+                    <option value="面板部分为金属，背板部分为塑料">面板部分为金属，背板部分为塑料</option>
+                    <option value="气体采样部分为塑料，其他部分为金属">气体采样部分为塑料，其他部分为金属</option>
+                    <option value="上盖侧面为金属，其他部分为塑料">上盖侧面为金属，其他部分为塑料</option>
+                </select>
+            </div>
+        </div>
+        <div class="form-group col-sm-6">
+            <div class="col-sm-3 control-label">工作方式</div>
+            <div class="col-sm-9">
+                <!--                            <input type="text" class="form-control" v-model="competitor.workingMode" placeholder="工作方式"/>-->
+                <select type="text" class="form-control" v-model="competitor.workingmode">
+                    <option>/</option>
+                    <option value="独立式">独立式</option>
+                    <option value="系统式">系统式</option>
+                    <option value="连续工作型">连续工作型</option>
+                </select>
+            </div>
+        </div>
+        <div class="form-group col-sm-6">
+            <div class="col-sm-3 control-label">采样方式</div>
+            <div class="col-sm-9">
+                <!--                            <input type="text" class="form-control" v-model="competitor.samplingMode" placeholder="采样方式"/>-->
+                <select type="text" class="form-control" v-model="competitor.samplingmode">
+                    <option>/</option>
+                    <option value="自由扩散式">自由扩散式</option>
+                </select>
+            </div>
+        </div>
+        <div class="form-group col-sm-6">
+            <div class="col-sm-3 control-label">使用工作条件</div>
+            <div class="col-sm-9">
+                <!--                            <input type="text" class="form-control" v-model="competitor.useCondition" placeholder="使用工作条件"/>-->
+                <select type="text" class="form-control" v-model="competitor.usecondition">
+                    <option>/</option>
+                    <option value="室内使用型">室内使用型</option>
+                    <option value="室外使用型">室外使用型</option>
+                </select>
+            </div>
+        </div>
+        <div class="form-group col-sm-6">
+            <div class="col-sm-3 control-label">显示功能</div>
+            <div class="col-sm-9">
+                <!--                            <input type="text" class="form-control" v-model="competitor.displayFunction" placeholder="显示功能"/>-->
+                <select type="text" class="form-control" v-model="competitor.displayfunction">
+                    <option>/</option>
+                    <option value="具有可燃气体浓度显示">具有可燃气体浓度显示</option>
+                </select>
+            </div>
+        </div>
+        <div class="form-group col-sm-6">
+            <div class="col-sm-3 control-label">显示器件</div>
+            <div class="col-sm-9">
+                <!--                            <input type="text" class="form-control" v-model="competitor.displayDevice" placeholder="显示器件"/>-->
+                <select type="text" class="form-control" v-model="competitor.displaydevice">
+                    <option>/</option>
+                    <option value="数码管">数码管</option>
+                    <option value="液晶显示器">液晶显示器</option>
+                    <option value="数码管、液晶显示器">数码管、液晶显示器</option>
+                </select>
+            </div>
+        </div>
+        <div class="form-group col-sm-6">
+            <div class="col-sm-3 control-label">分型与主型差异</div>
+            <div class="col-sm-9">
+                <input type="text" class="form-control" v-model="competitor.difference" placeholder="分型与主型差异"/>
+            </div>
+        </div>
+        <div class="form-group col-sm-6">
+            <div class="col-sm-3 control-label">与以下产品配接</div>
+            <div class="col-sm-9">
+                <input type="text" class="form-control" v-model="competitor.patch" placeholder="与以下产品配接工作"/>
+            </div>
+        </div>
+        <div class="form-group col-sm-6">
+            <div class="col-sm-3 control-label">输出节量点数</div>
+            <div class="col-sm-9">
+                <!--                            <input type="text" class="form-control" v-model="competitor.outputnode" placeholder="输出节量点数"/>-->
+                <select type="text" class="form-control" v-model="competitor.outputnode" placeholder="输出节量点数"/>
+                <option>/</option>
+                <option value=""></option>
+                <option value="1组">1组</option>
+                <option value="2组">2组</option>
+                <option value="3组">3组</option>
+                <option value="4组">4组</option>
+                <option value="5组">5组</option>
+                <option value="6组">6组</option>
+                </select>
+            </div>
+        </div>
+        <div class="form-group col-sm-6">
+            <div class="col-sm-3 control-label">产品图片</div>
+            <div class="col-sm-9">
+                <button type="button" class="layui-btn" id="images1" v-model="competitor.productpicture">
+                    <i class="fa fa-arrow-circle-up" aria-hidden="true"></i> 上传图片
+                </button>
+                <input type="text" v-model="productpicture" id="notes1"/>
+            </div>
+        </div>
+        <div class="form-group col-sm-6">
+            <div class="col-sm-3 control-label">检验机构</div>
+            <div class="col-sm-9">
+                <select type="text" class="form-control" v-model="competitor.inspectionorganization" placeholder="检验机构"/>
+                <option value=" "></option>
+                <option value="国家消防电子产品质量检验检测中心（沈阳）">国家消防电子产品质量检验检测中心（沈阳）</option>
+                <option value="国家消防电子产品质量监督检验中心（沈阳）">国家消防电子产品质量监督检验中心（沈阳）</option>
+                <option value="国家消防及阻燃产品质量检验检测中心（山东）">国家消防及阻燃产品质量检验检测中心（山东）</option>
+                <option value="国家消防及阻燃产品质量监督检验中心（山东）">国家消防及阻燃产品质量监督检验中心（山东）</option>
+                <option value="国家固定灭火系统和耐火构件质量检验检测中心（天津）">国家固定灭火系统和耐火构件质量检验检测中心（天津）</option>
+                </select>
+            </div>
+        </div>
+        <div class="form-group col-sm-6">
+            <div class="col-sm-3 control-label">编制人</div>
+            <div class="col-sm-9">
+                <input type="text" class="form-control" v-model="competitor.organization" placeholder="编制人"/>
+            </div>
+        </div>
+        <div class="form-group col-sm-6">
+            <div class="col-sm-3 control-label">审核人</div>
+            <div class="col-sm-9">
+                <input type="text" class="form-control" v-model="competitor.examine" placeholder="审核人"/>
+            </div>
+        </div>
+        <div class="form-group col-sm-6">
+            <div class="col-sm-3 control-label">批准人</div>
+            <div class="col-sm-9">
+                <input type="text" class="form-control" v-model="competitor.approval" placeholder="批准人"/>
+            </div>
+        </div>
+        <div class="form-group col-sm-6">
+            <div class="col-sm-3 control-label">产品证书</div>
+            <div class="col-sm-9">
+                <!--                            <input type="text" class="form-control" v-model="competitor.productcertificate" placeholder="产品证书"/>-->
+                <button type="button" class="layui-btn" id="file1" v-model="competitor.productcertificate">
+                    <i class="fa fa-arrow-circle-up" aria-hidden="true"></i> 上传文件
+                </button>
+                <input type="text" v-model="productcertificate" id="notes2"/>
+            </div>
+        </div>
+        <div class="form-group col-sm-6">
+            <div class="col-sm-3 control-label">检验报告</div>
+            <div class="col-sm-9">
+                <!--                            <input type="btn" class="form-control" v-model="competitor.inspectionreport" placeholder="检验报告"/>-->
+                <button type="button" class="layui-btn" id="file2" v-model="competitor.inspectionreport">
+                    <i class="fa fa-arrow-circle-up" aria-hidden="true"></i> 上传文件
+                </button>
+                <input type="text" v-model="inspectionreport" id="notes3"/>
+            </div>
+        </div>
+        <div class="form-grou col-sm-12" id="mybtn">
+            <!--                <div class="col-sm-2 control-label"></div>-->
+            <input type="button" class="btn btn-primary" id="btnSaveOrUpdate" data-loading-text="保存中..." @click="saveOrUpdate" value="确定"/>
+            &nbsp;&nbsp;<input type="button" class="btn btn-warning" id="return1" @click="reload" value="返回"/>
+        </div>
+    </form>
+</div>
+</div>
+
+<div id="myDialog"  v-show="showFile">
+    <div id="closeDialog">✖️</div>
+    <iframe id="dialogBox" v-show="showFile"></iframe>
+</div>
+<div id="myDialog1"  v-show="showImg">
+    <div id="closeDialog1">✖️</div>
+    <iframe id="dialogBox1" v-show="showImg"></iframe>
+</div>
+<script type="text/javascript" src="${request.contextPath}/statics/layui/layui.js?_${.now?long}"></script>
+<script src="http://localhost:8080/renren-admin/statics/js/a.js?_${.now?long}"></script>
+<script src="${request.contextPath}/statics/js/a.js?_${.now?long}"></script>
+<script src="${request.contextPath}/statics/js/modules/sys/competitor.js?_${.now?long}"></script>
+<script type="text/javascript"></script>
+<script>
+    layui.use('upload', function(){
+        var upload = layui.upload;
+        var uploadInst = upload.render({
+            elem: '#images1',//绑定元素
+            url: baseURL+'sys/competitor/upload' ,//上传接口
+            done: (res) => {
+                console.log(res)
+                vm.competitor.productpicture = res.msg
+                vm.productpicture = res.msg
+            },
+            error: function(){
+
+            },
+            accept: 'file'
+        });
+    });
+    layui.use('upload', function(){
+        var upload = layui.upload;
+        var uploadInst = upload.render({
+            elem: '#file1',//绑定元素
+            url: baseURL+'sys/competitor/upload' ,//上传接口
+            done: (res) => {
+                console.log(res)
+                vm.competitor.productcertificate = res.msg
+                vm.productcertificate = res.msg
+            },
+            error: function(){
+
+            },
+            accept: 'file'
+        });
+    });
+    layui.use('upload', function(){
+        var upload = layui.upload;
+        var uploadInst = upload.render({
+            elem: '#file2',//绑定元素
+            url: baseURL+'sys/competitor/upload' ,//上传接口
+            done: (res) => {
+                console.log(res)
+                vm.competitor.inspectionreport = res.msg
+                vm.inspectionreport = res.msg
+            },
+            error: function(){
+
+            },
+            accept: 'file'
+        });
+    });
+    function selectFile()
+    {
+        document.getElementById("upfile").click();
+    }
+    function doUpload(){
+        $.ajaxFileUpload({
+            url : baseURL+"sys/competitor/import",
+            type : "POST",
+            dataType:"json",
+            fileElementId :"upfile",
+            success:function (data) {
+                alert(data.msg);
+                window.location.reload();
+                alert('导入成功!');
+            },
+            error:function(erro){
+                console.log("erro:"+erro);
+
+            }
+        });
+    };
+</script>
+</body>
+</html>

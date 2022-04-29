@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta name="viewport" content="width=device-width, initial-scale=0.3">
+	<title>分析报表</title>
+	<#include "/header.html">
+	<link rel="stylesheet" href="${request.contextPath}/statics/css/report.css">
+	<link rel="stylesheet" href="${request.contextPath}/statics/css/bootstrap.min.css">
+	<script src="${request.contextPath}/statics/libs/echars.js?_${.now?long}"></script>
+	<script src="${request.contextPath}/statics/libs/jquery.min.js?_${.now?long}"></script>
+	<script src="${request.contextPath}/statics/libs/vue.min.js?_${.now?long}"></script>
+</head>
+<body>
+<div id="container">
+<!-- 头部区域 -->
+	<div id="header">
+		<ul>
+			<li>
+				<select style="width: 140px; heighe: 30px; border: none; outline: none;" id="mySelect2">
+					<option>全部</option>
+					<option value="2020">2020年</option>
+					<option value="2021">2021年</option>
+					<option value="2022">2022年</option>
+				</select>
+			</li>
+			<li>河南驰诚电气股份有限公司</li>
+			<li style="padding-right: 0px;">证书数量: &nbsp</li>
+			<li id="certificate" style="padding-left: 0px;"></li>
+		</ul>
+	</div>
+<!--	内容区域-->
+	<div id="content">
+		<div id="left1" class="col-xs-12">
+			<div class="option">
+				<select id="mySelect">
+					<option>全部</option>
+					<option value="2020">2020年</option>
+					<option value="2021">2021年</option>
+					<option value="2022">2022年</option>
+				</select>
+			</div>
+			<div id="main"></div>
+		</div>
+		<div id="right1" class="col-xs-12">
+			<div class="option">
+				<form autocomplete="off" action="/index.php" name="myform">
+					<div class="autocomplete" style="width:300px;">
+						<input id="myInput"  type="text" name="s" placeholder="请输入公司名称">
+						<input type="submit" id="mySubmit" onclick="return func()">
+					</div>
+				</form>
+<!--				<input type="text" class="word" placeholder="证书数量"/>-->
+			</div>
+			<div id="main1" class="col-xs-12"></div>
+		</div>
+	</div>
+	<div class="next">
+		<div class="option">
+			<select id="mySelect1">
+				<option>全部</option>
+				<option value="2020">2020年</option>
+				<option value="2021">2021年</option>
+				<option value="2022">2022年</option>
+			</select>
+		</div>
+		<div id="main2"></div>
+	</div>
+<!--	底部区域-->
+	<div id="footer">
+		<div class="total1">
+			<div class="ranking">证书数量排行榜</div>
+			<table class="table-hover table-bordered">
+				<thead>
+				<tr>
+					<th>总排名</th>
+					<th>公司名称</th>
+					<th><button value="num">证书数量</button></th>
+					<th><button value="num1">家用可燃气体探测器</button></th>
+					<th><button value="num2">工业及商业用途便携式可燃气体探测器</button></th>
+					<th><button value="num3">工业及商业用途点型可燃气体探测器</button></th>
+				</tr>
+				</thead>
+				<tbody id="certificateNumber">
+				</tbody>
+			</table>
+		</div>
+	</div>
+</div>
+
+<script src="${request.contextPath}/statics/js/modules/sys/report.js?_${.now?long}"></script>
+<script type="text/javascript">
+	window.onload=function(){
+		func();
+		$("#mySelect").change();
+		$("#mySelect1").change();
+		$("#mySelect2").change();
+	}
+</script>
+</body>
+</html>

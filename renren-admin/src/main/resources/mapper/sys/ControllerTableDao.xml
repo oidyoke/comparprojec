@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.renren.modules.sys.dao.ControllerTableDao">
+
+	<!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="io.renren.modules.sys.entity.ControllerTableEntity" id="controllerTableMap">
+        <result property="id" column="id"/>
+        <result property="company" column="company"/>
+        <result property="categor" column="categor"/>
+        <result property="product" column="product"/>
+        <result property="model" column="model"/>
+        <result property="usedname" column="usedname"/>
+        <result property="producer" column="producer"/>
+        <result property="manufacturer" column="manufacturer"/>
+        <result property="fertificate" column="fertificate"/>
+        <result property="firstissuedate" column="firstissuedate"/>
+        <result property="renewaldate" column="renewaldate"/>
+        <result property="termvalidity" column="termvalidity"/>
+        <result property="implementationrule" column="implementationrule"/>
+        <result property="certification" column="certification"/>
+        <result property="standardnumber" column="standardnumber"/>
+        <result property="inspectionnumber" column="inspectionnumber"/>
+        <result property="report" column="report"/>
+        <result property="inspectioncategory" column="inspectioncategory"/>
+        <result property="inspectionitems" column="inspectionitems"/>
+        <result property="device" column="device"/>
+        <result property="keymodels" column="keymodels"/>
+        <result property="keymanufacturers" column="keymanufacturers"/>
+        <result property="powerupply" column="powerupply"/>
+        <result property="overalldimension" column="overalldimension"/>
+        <result property="equipmentcapacity" column="equipmentcapacity"/>
+        <result property="batterysize" column="batterysize"/>
+        <result property="material" column="material"/>
+        <result property="communicationmode" column="communicationmode"/>
+        <result property="outputnode" column="outputnode"/>
+        <result property="recordingfunction" column="recordingfunction"/>
+        <result property="alarmpoint" column="alarmpoint"/>
+        <result property="extrafeatures" column="extrafeatures"/>
+        <result property="terminalmarking" column="terminalmarking"/>
+        <result property="wording" column="wording"/>
+        <result property="havedatenumber" column="havedatenumber"/>
+        <result property="difference" column="difference"/>
+        <result property="patch" column="patch"/>
+        <result property="graphicdisplay" column="graphicdisplay"/>
+        <result property="productpicture" column="productpicture"/>
+        <result property="inspectionorganization" column="inspectionorganization"/>
+        <result property="organization" column="organization"/>
+        <result property="examine" column="examine"/>
+        <result property="approval" column="approval"/>
+        <result property="productcertificate" column="productcertificate"/>
+        <result property="inspectionreport" column="inspectionreport"/>
+    </resultMap>
+
+    <select id="selectAll" resultType="io.renren.modules.sys.excel.ControllerTableExcel">
+        select * from controller_table
+    </select>
+
+    <insert id="save" parameterType="java.util.List">
+
+        replace into controller_table(
+
+        company,
+        categor,
+        product,
+        model,
+        usedname,
+        producer,
+        manufacturer,
+        fertificate,
+        firstissuedate,
+        renewaldate,
+        termvalidity,
+        implementationrule,
+        certification,
+        standardnumber,
+        inspectionnumber,
+        report,
+        inspectioncategory,
+        inspectionitems,
+        device,
+        keymodels,
+        keymanufacturers,
+        powerupply,
+        overalldimension,
+        equipmentcapacity,
+        batterysize,
+        material,
+        communicationmode,
+        outputnode,
+        recordingfunction,
+        alarmpoint,
+        extrafeatures,
+        terminalmarking,
+        wording,
+        havedatenumber,
+        difference,
+        patch,
+        graphicdisplay,
+        productpicture,
+        inspectionorganization,
+        organization,
+        examine,
+        approval,
+        productcertificate,
+        inspectionreport
+
+
+        )
+
+        values
+        <foreach collection="list" item="item" index="index" separator=",">
+            (
+            #{item.company},
+            #{item.categor},
+            #{item.product},
+            #{item.model},
+            #{item.usedname},
+            #{item.producer},
+            #{item.manufacturer},
+            #{item.fertificate},
+            #{item.firstissuedate},
+            #{item.renewaldate},
+            #{item.termvalidity},
+            #{item.implementationrule},
+            #{item.certification},
+            #{item.standardnumber},
+            #{item.inspectionnumber},
+            #{item.report},
+            #{item.inspectioncategory},
+            #{item.inspectionitems},
+            #{item.device},
+            #{item.keymodels},
+            #{item.keymanufacturers},
+            #{item.powerupply},
+            #{item.overalldimension},
+            #{item.equipmentcapacity},
+            #{item.batterysize},
+            #{item.material},
+            #{item.communicationmode},
+            #{item.outputnode},
+            #{item.recordingfunction},
+            #{item.alarmpoint},
+            #{item.extrafeatures},
+            #{item.terminalmarking},
+            #{item.wording},
+            #{item.havedatenumber},
+            #{item.difference},
+            #{item.patch},
+            #{item.graphicdisplay},
+            #{item.productpicture},
+            #{item.inspectionorganization},
+            #{item.organization},
+            #{item.examine},
+            #{item.approval},
+            #{item.productcertificate},
+            #{item.inspectionreport}
+            )
+        </foreach>
+    </insert>
+
+</mapper>

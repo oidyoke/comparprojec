@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <link rel="stylesheet" type="text/css" href="http://localhost:8080/renren-admin/statics/layui/css/layui.css">
+    <title></title>
+		<#include "/header.html">
+</head>
+<body>
+<div id="rrapp" v-cloak>
+    <div v-show="showList">
+        <div class="grid-btn">
+            <a class="btn btn-success" @click= "query"><i class="fa fa-search"></i>查询</a>
+			<#if shiro.hasPermission("sys:controllertable:save")>
+            <a class="btn btn-primary" @click="add"><i class="fa fa-plus"></i>&nbsp;新增</a>
+			</#if>
+			<#if shiro.hasPermission("sys:controllertable:update")>
+            <a class="btn btn-primary" @click="update"><i class="fa fa-pencil-square-o"></i>&nbsp;修改</a>
+			</#if>
+			<#if shiro.hasPermission("sys:controllertable:delete")>
+            <a class="btn btn-primary" @click="del"><i class="fa fa-trash-o"></i>&nbsp;删除</a>
+			</#if>
+            <a class="btn btn-primary" onclick="selectFile()"><i class="fa fa-download" ></i> 导入</a>
+
+            <input id="upfile" type="file" onchange="doUpload()" name="upfile" accept=".xls,.xlsx"  style="display:none"/>
+
+            <a class="btn btn-primary" href="http://localhost:8080/renren-admin/sys/controllertable/downloadExcel"><i class="fa fa-upload"></i>&nbsp;导出</a>
+
+            <a class="btn btn-default" @click="vh1">点击展开/关闭</a>
+            <a class="btn btn-default" @click="Reseting1">查询重置</a>
+        </div>
+        <table id="jqGrid"></table>
+        <div id="jqGridPager"></div>
+    </div>
+
+    <div v-show="!showList" class="panel panel-default">
+        <div class="panel-heading">{{title}}</div>
+        <form class="form-horizontal">
+														                    <div class="form-group">
+                        <div class="col-sm-2 control-label">公司名称</div>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" v-model="controllerTable.company" placeholder="公司名称"/>
+                        </div>
+                    </div>
+											                    <div class="form-group">
+                        <div class="col-sm-2 control-label">产品类别</div>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" v-model="controllerTable.categor" placeholder="产品类别"/>
+                        </div>
+                    </div>
+											                    <div class="form-group">
+                        <div class="col-sm-2 control-label">产品名称</div>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" v-model="controllerTable.product" placeholder="产品名称"/>
+                        </div>
+                    </div>
+											                    <div class="form-group">
+                        <div class="col-sm-2 control-label">产品型号</div>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" v-model="controllerTable.model" placeholder="产品型号"/>
+                        </div>
+                    </div>
+											                    <div class="form-group">
+                        <div class="col-sm-2 control-label">公司曾用名</div>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" v-model="controllerTable.usedname" placeholder="公司曾用名"/>
+                        </div>
+                    </div>
+											                    <div class="form-group">
+                        <div class="col-sm-2 control-label">制造商</div>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" v-model="controllerTable.producer" placeholder="制造商"/>
+                        </div>
+                    </div>
+											                    <div class="form-group">
+                        <div class="col-sm-2 control-label">生产厂家</div>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" v-model="controllerTable.manufacturer" placeholder="生产厂家"/>
+                        </div>
+                    </div>
+											                    <div class="form-group">
+                        <div class="col-sm-2 control-label">证书编号</div>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" v-model="controllerTable.fertificate" placeholder="证书编号"/>
+                        </div>
+                    </div>
+											                    <div class="form-group">
+                        <div class="col-sm-2 control-label">首次发证日期</div>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" v-model="controllerTable.firstissuedate" placeholder="首次发证日期"/>
+                        </div>
+                    </div>
+											                    <div class="form-group">
+                        <div class="col-sm-2 control-label">换发证日期</div>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" v-model="controllerTable.renewaldate" placeholder="换发证日期"/>
+                        </div>
+                    </div>
+											                    <div class="form-group">
+                        <div class="col-sm-2 control-label">有效期</div>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" v-model="controllerTable.termvalidity" placeholder="有效期"/>
+                        </div>
+                    </div>
+											                    <div class="form-group">
+                        <div class="col-sm-2 control-label">实施规则</div>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" v-model="controllerTable.implementationrule" placeholder="实施规则"/>
+                        </div>
+                    </div>
+											                    <div class="form-group">
+                        <div class="col-sm-2 control-label">认证模式</div>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" v-model="controllerTable.certification" placeholder="认证模式"/>
+                        </div>
+                    </div>
+											                    <div class="form-group">
+                        <div class="col-sm-2 control-label">标准号</div>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" v-model="controllerTable.standardnumber" placeholder="标准号"/>
+                        </div>
+                    </div>
+											                    <div class="form-group">
+                        <div class="col-sm-2 control-label">检验报告编号</div>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" v-model="controllerTable.inspectionnumber" placeholder="检验报告编号"/>
+                        </div>
+                    </div>
+											                    <div class="form-group">
+                        <div class="col-sm-2 control-label">报告签发日期</div>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" v-model="controllerTable.report" placeholder="报告签发日期"/>
+                        </div>
+                    </div>
+											                    <div class="form-group">
+                        <div class="col-sm-2 control-label">检验类别</div>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" v-model="controllerTable.inspectioncategory" placeholder="检验类别"/>
+                        </div>
+                    </div>
+											                    <div class="form-group">
+                        <div class="col-sm-2 control-label">检验项目</div>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" v-model="controllerTable.inspectionitems" placeholder="检验项目"/>
+                        </div>
+                    </div>
+											                    <div class="form-group">
+                        <div class="col-sm-2 control-label">关键器件</div>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" v-model="controllerTable.device" placeholder="关键器件"/>
+                        </div>
+                    </div>
+											                    <div class="form-group">
+                        <div class="col-sm-2 control-label">关键器件型号</div>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" v-model="controllerTable.keymodels" placeholder="关键器件型号"/>
+                        </div>
+                    </div>
+											                    <div class="form-group">
+                        <div class="col-sm-2 control-label">关键器件生产厂家</div>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" v-model="controllerTable.keymanufacturers" placeholder="关键器件生产厂家"/>
+                        </div>
+                    </div>
+											                    <div class="form-group">
+                        <div class="col-sm-2 control-label">供电方式</div>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" v-model="controllerTable.powerupply" placeholder="供电方式"/>
+                        </div>
+                    </div>
+											                    <div class="form-group">
+                        <div class="col-sm-2 control-label">外形尺寸</div>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" v-model="controllerTable.overalldimension" placeholder="外形尺寸"/>
+                        </div>
+                    </div>
+											                    <div class="form-group">
+                        <div class="col-sm-2 control-label">设备容量</div>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" v-model="controllerTable.equipmentcapacity" placeholder="设备容量"/>
+                        </div>
+                    </div>
+											                    <div class="form-group">
+                        <div class="col-sm-2 control-label">电池</div>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" v-model="controllerTable.batterysize" placeholder="电池"/>
+                        </div>
+                    </div>
+											                    <div class="form-group">
+                        <div class="col-sm-2 control-label">外壳材质</div>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" v-model="controllerTable.material" placeholder="外壳材质"/>
+                        </div>
+                    </div>
+											                    <div class="form-group">
+                        <div class="col-sm-2 control-label">通信方式</div>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" v-model="controllerTable.communicationmode" placeholder="通信方式"/>
+                        </div>
+                    </div>
+											                    <div class="form-group">
+                        <div class="col-sm-2 control-label">输出节点组数</div>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" v-model="controllerTable.outputnode" placeholder="输出节点组数"/>
+                        </div>
+                    </div>
+											                    <div class="form-group">
+                        <div class="col-sm-2 control-label">记录功能</div>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" v-model="controllerTable.recordingfunction" placeholder="记录功能"/>
+                        </div>
+                    </div>
+											                    <div class="form-group">
+                        <div class="col-sm-2 control-label">报警设定值</div>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" v-model="controllerTable.alarmpoint" placeholder="报警设定值"/>
+                        </div>
+                    </div>
+											                    <div class="form-group">
+                        <div class="col-sm-2 control-label">额外功能</div>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" v-model="controllerTable.extrafeatures" placeholder="额外功能"/>
+                        </div>
+                    </div>
+											                    <div class="form-group">
+                        <div class="col-sm-2 control-label">接线端子标注</div>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" v-model="controllerTable.terminalmarking" placeholder="接线端子标注"/>
+                        </div>
+                    </div>
+											                    <div class="form-group">
+                        <div class="col-sm-2 control-label">警告用语</div>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" v-model="controllerTable.wording" placeholder="警告用语"/>
+                        </div>
+                    </div>
+											                    <div class="form-group">
+                        <div class="col-sm-2 control-label">有无产品证书和产品编号</div>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" v-model="controllerTable.havedatenumber" placeholder="有无产品证书和产品编号"/>
+                        </div>
+                    </div>
+											                    <div class="form-group">
+                        <div class="col-sm-2 control-label">分型与主型的差异</div>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" v-model="controllerTable.difference" placeholder="分型与主型的差异"/>
+                        </div>
+                    </div>
+											                    <div class="form-group">
+                        <div class="col-sm-2 control-label">与以下产品的配接工作</div>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" v-model="controllerTable.patch" placeholder="与以下产品的配接工作"/>
+                        </div>
+                    </div>
+											                    <div class="form-group">
+                        <div class="col-sm-2 control-label">图形显示装置</div>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" v-model="controllerTable.graphicdisplay" placeholder="图形显示装置"/>
+                        </div>
+                    </div>
+											                    <div class="form-group">
+                        <div class="col-sm-2 control-label">产品图片</div>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" v-model="controllerTable.productpicture" placeholder="产品图片"/>
+                        </div>
+                    </div>
+											                    <div class="form-group">
+                        <div class="col-sm-2 control-label">检验机构</div>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" v-model="controllerTable.inspectionorganization" placeholder="检验机构"/>
+                        </div>
+                    </div>
+											                    <div class="form-group">
+                        <div class="col-sm-2 control-label">编制人</div>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" v-model="controllerTable.organization" placeholder="编制人"/>
+                        </div>
+                    </div>
+											                    <div class="form-group">
+                        <div class="col-sm-2 control-label">审核人</div>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" v-model="controllerTable.examine" placeholder="审核人"/>
+                        </div>
+                    </div>
+											                    <div class="form-group">
+                        <div class="col-sm-2 control-label">批准人</div>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" v-model="controllerTable.approval" placeholder="批准人"/>
+                        </div>
+                    </div>
+											                    <div class="form-group">
+                        <div class="col-sm-2 control-label">产品证书</div>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" v-model="controllerTable.productcertificate" placeholder="产品证书"/>
+                        </div>
+                    </div>
+											                    <div class="form-group">
+                        <div class="col-sm-2 control-label">检验报告</div>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" v-model="controllerTable.inspectionreport" placeholder="检验报告"/>
+                        </div>
+                    </div>
+							            <div class="form-group">
+                <div class="col-sm-2 control-label"></div>
+                <input type="button" class="btn btn-primary" id="btnSaveOrUpdate" data-loading-text="保存中..." @click="saveOrUpdate" value="确定"/>
+                &nbsp;&nbsp;<input type="button" class="btn btn-warning" @click="reload" value="返回"/>
+            </div>
+        </form>
+    </div>
+</div>
+<script type="text/javascript" src="${request.contextPath}/statics/layui/layui.js?_${.now?long}"></script>
+<script src="http://localhost:8080/renren-admin/statics/js/a.js?_${.now?long}"></script>
+<script src="${request.contextPath}/statics/js/a.js?_${.now?long}"></script>
+<script src="${request.contextPath}/statics/js/modules/sys/controllertable.js?_${.now?long}"></script>
+
+<script type="text/javascript"></script>
+<script>
+    layui.use('upload', function(){
+        var upload = layui.upload;
+        var uploadInst = upload.render({
+            elem: '#images1',//绑定元素
+            url: baseURL+'sys/controllertable/upload' ,//上传接口
+            done: (res) => {
+                console.log(res)
+                vm.competitor.productpicture = res.msg
+                vm.productpicture = res.msg
+            },
+            error: function(){
+
+            },
+            accept: 'file'
+        });
+    });
+    layui.use('upload', function(){
+        var upload = layui.upload;
+        var uploadInst = upload.render({
+            elem: '#file1',//绑定元素
+            url: baseURL+'sys/controllertable/upload' ,//上传接口
+            done: (res) => {
+                console.log(res)
+                vm.competitor.productcertificate = res.msg
+                vm.productcertificate = res.msg
+            },
+            error: function(){
+
+            },
+            accept: 'file'
+        });
+    });
+    layui.use('upload', function(){
+        var upload = layui.upload;
+        var uploadInst = upload.render({
+            elem: '#file2',//绑定元素
+            url: baseURL+'sys/controllertable/upload' ,//上传接口
+            done: (res) => {
+                console.log(res)
+                vm.competitor.inspectionreport = res.msg
+                vm.inspectionreport = res.msg
+            },
+            error: function(){
+
+            },
+            accept: 'file'
+        });
+    });
+    function selectFile()
+    {
+        document.getElementById("upfile").click();
+    }
+    function doUpload(){
+        $.ajaxFileUpload({
+            url : baseURL+"sys/controllertable/import",
+            type : "POST",
+            dataType:"json",
+            fileElementId :"upfile",
+            success:function (data) {
+                alert(data.msg);
+                window.location.reload();
+                alert('导入成功!');
+            },
+            error:function(erro){
+                console.log("erro:"+erro);
+
+            }
+        });
+    };
+</script>
+</body>
+</html>
